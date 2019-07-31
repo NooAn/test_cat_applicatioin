@@ -6,7 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -23,6 +22,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+kapt {
+    generateStubs = true
 }
 ext {
     supportLibraryVersion = '28.0.0'
@@ -31,18 +40,19 @@ ext {
     rxAndroidVersion = '2.1.0'
     rxNetworkVersion = '0.12.1'
     daggerVersion = '2.11'
-    glideVersion = '4.8.0'
+    glideVersion = '4.9.0'
     gsonVersion = '2.8.2'
     okhttp3Version = '3.9.0'
     retrofit2Version = '2.3.0'
     okhttp3Version = '3.9.0'
     lifecycle_version = "2.0.0"
-  // moxyVersion = '2.0-alpha05'
+    moxyVersion = '2.0-alpha05'
+    navVersionKtx = '2.1.0-beta02'
 
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
@@ -56,21 +66,25 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     // Dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     // Moxy
-    def moxyVersion = '2.0-alpha03'
-    implementation 'com.github.moxy-community:moxy:moxyVersion'
-    implementation 'com.github.moxy-community:moxy-material:moxyVersion'
-    implementation 'com.github.moxy-community:moxy-androidx:moxyVersion'
-    implementation 'com.github.moxy-community:moxy-app-compat:moxyVersion'
-    kapt 'com.github.moxy-community:moxy-compiler:moxyVersion'
+    implementation "com.github.moxy-community:moxy:$moxyVersion"
+    implementation "com.github.moxy-community:moxy-material:$moxyVersion"
+    implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
+    kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
+
 
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
 
 
     //GSON
@@ -83,7 +97,12 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2Version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
 
+    implementation 'com.github.nitrico.lastadapter:lastadapter:2.3.0'
+    kapt 'com.android.databinding:compiler:3.1.4'
 
+    // Nav
+    implementation "androidx.navigation:navigation-fragment-ktx:$navVersionKtx"
+    implementation "androidx.navigation:navigation-ui-ktx:$navVersionKtx"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

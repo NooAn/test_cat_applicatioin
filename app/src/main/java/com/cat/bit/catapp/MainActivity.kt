@@ -1,37 +1,29 @@
 package com.cat.bit.catapp
 
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.setupWithNavController
+import moxy.MvpAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), ListFragment.OnFragmentInteractionListener {
 
-    private lateinit var textMessage: TextView
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                textMessage.setText(R.string.title_home)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                textMessage.setText(R.string.title_dashboard)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_notifications -> {
-                textMessage.setText(R.string.title_notifications)
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
+    override fun onFragmentInteraction(uri: Uri) {
+
     }
+
+    private lateinit var navController: NavController
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
-        textMessage = findViewById(R.id.message)
-        navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navView.setupWithNavController(navController)
     }
 }
+
+
