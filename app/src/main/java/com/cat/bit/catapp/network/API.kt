@@ -1,5 +1,6 @@
-package com.cat.bit.catapp
+package com.cat.bit.catapp.network
 
+import com.cat.bit.catapp.entity.Cats
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

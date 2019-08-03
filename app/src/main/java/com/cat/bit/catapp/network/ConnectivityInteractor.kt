@@ -1,6 +1,5 @@
 package com.cat.bit.catapp.network
 
-import com.cat.bit.catapp.NetworkConnectionHelper
 import com.github.pwittchen.reactivenetwork.library.rx2.Connectivity
 import io.reactivex.Observable
 import javax.inject.Inject

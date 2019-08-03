@@ -12,7 +12,7 @@
             tools:layout="@layout/fragment_list" />
     <fragment
             android:id="@+id/bookmarksFragment"
-            android:name="com.cat.bit.catapp.BookmarksFragment"
+            android:name="com.cat.bit.catapp.ui.BookmarksFragment"
             android:label="fragment_bookmarks"
             tools:layout="@layout/fragment_bookmarks" />
 </navigation>

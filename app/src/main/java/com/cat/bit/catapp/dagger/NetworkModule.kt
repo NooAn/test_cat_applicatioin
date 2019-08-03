@@ -2,7 +2,9 @@ package com.cat.bit.catapp.dagger
 
 import android.app.Application
 import com.cat.bit.catapp.*
+import com.cat.bit.catapp.network.CatApi
 import com.cat.bit.catapp.network.ConnectivityInteractor
+import com.cat.bit.catapp.network.NetworkConnectionHelper
 import com.cat.bit.catapp.network.RequestInterceptor
 import dagger.Module
 import dagger.Provides
@@ -50,7 +52,8 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    internal fun provideNetworkConnectionHelper(app: Application) = NetworkConnectionHelper(app)
+    internal fun provideNetworkConnectionHelper(app: Application) =
+        NetworkConnectionHelper(app)
 
 
     @Singleton

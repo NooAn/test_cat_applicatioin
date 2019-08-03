@@ -1,4 +1,4 @@
-package com.cat.bit.catapp
+package com.cat.bit.catapp.network
 
 import android.content.Context
 import android.net.NetworkInfo

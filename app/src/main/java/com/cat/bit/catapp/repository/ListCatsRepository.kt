@@ -1,9 +1,8 @@
 package com.cat.bit.catapp.repository
 
-import com.cat.bit.catapp.CatApi
-import com.cat.bit.catapp.Cats
+import com.cat.bit.catapp.network.CatApi
+import com.cat.bit.catapp.entity.Cats
 import io.reactivex.Single
-import retrofit2.Retrofit
 import javax.inject.Inject
 
 

@@ -1,8 +1,10 @@
 package com.cat.bit.catapp.presenter
 
+import android.graphics.Bitmap
 import android.net.NetworkInfo
 import android.util.Log
-import com.cat.bit.catapp.ListInteractor
+import com.bumptech.glide.request.FutureTarget
+import com.cat.bit.catapp.interactor.ListInteractor
 import com.cat.bit.catapp.network.ConnectivityInteractor
 import com.cat.bit.catapp.view.ListView
 import com.github.pwittchen.reactivenetwork.library.rx2.Connectivity
@@ -32,10 +34,9 @@ class ListPresenter @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Log.d("LOG", "cats $it")
                     viewState.showList(it)
                 }, {
-                    Log.e("LOG", it.message)
+                    viewState.showNotification("List of cats was not downloaded => ${it.message}")
                 })
         )
     }
@@ -60,5 +61,29 @@ class ListPresenter @Inject constructor(
     override fun onDestroy() {
         compositeDisposable.clear()
         super.onDestroy()
+    }
+
+    fun saveImage(
+        futureTarget: FutureTarget<Bitmap>,
+        url: String
+    ) {
+        compositeDisposable.add(
+            interactor.saveBitmap(futureTarget, url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ file ->
+                    viewState.showNotificationImageSaved(
+                        "The file has been saved in your default download location",
+                        file
+                    )
+                }, {
+                    Log.e("LOG", "Presenter click image ", it)
+                    viewState.showNotification("Image has not saved ${it.message}")
+                })
+        )
+    }
+
+    fun makeBookmark(submit: FutureTarget<Bitmap>, url: String) {
+        viewState.showNotification("Image was added")
     }
 }
