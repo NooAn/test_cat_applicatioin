@@ -7,9 +7,9 @@ import kotlin.reflect.KClass
 @Entity(tableName = "bookmarks")
 data class Bookmark(
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: String,
+    val id: Int = 0,
 
     @ColumnInfo(name = "image")
     val image: ByteArray? = null
@@ -37,16 +37,15 @@ data class Bookmark(
 }
 
 @Dao
-interface ImageDao {
+interface BookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertImage(image: Bookmark)
 
     @Query("SELECT * FROM bookmarks")
     fun getAll(): List<Bookmark>
-
 }
 
-@Database(entities = [Bookmark::class], version = 1,exportSchema = false)
-abstract class Database : RoomDatabase() {
-    abstract fun getBookmarkDao(): Bookmark
+@Database(entities = [Bookmark::class], version = 1, exportSchema = false)
+abstract class BookmarkDB : RoomDatabase() {
+    abstract fun getBookmarkDao(): BookmarkDao
 }

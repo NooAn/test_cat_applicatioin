@@ -1,15 +1,9 @@
 package com.cat.bit.catapp.interactor
 
 import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Environment
 import com.bumptech.glide.request.FutureTarget
 import com.cat.bit.catapp.entity.Cats
 import com.cat.bit.catapp.repository.ListCatsRepository
-import io.reactivex.Single
-import java.io.File
-import java.io.FileOutputStream
-import java.net.URI
 import javax.inject.Inject
 
 
@@ -21,23 +15,15 @@ class ListInteractor @Inject constructor(private val repository: ListCatsReposit
         url = DEFAULT_ERROR_IMAGE
     }))
 
+    fun makeBookmarkFromImage(futureTarget: FutureTarget<Bitmap>, url: String) =
+        repository.bookmarkImage(futureTarget, url)
+
     fun saveBitmap(
         futureTarget: FutureTarget<Bitmap>,
         url: String
-    ) =
-        Single.fromCallable { futureTarget.get() }
-            .map { bitmap ->
-                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val file =
-                    File(
-                        path,
-                        URI(url).path.toString().replace("/","_")
-                    )
-                FileOutputStream(file).use {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, it)
-                }
-                path
-            }
-            .doFinally { futureTarget.cancel(false) }
+    ) = repository.saveBitmapInDownloads(futureTarget, url)
+
+    fun getAllBookmarks() = repository.getAllBookmarImages()
+
 
 }

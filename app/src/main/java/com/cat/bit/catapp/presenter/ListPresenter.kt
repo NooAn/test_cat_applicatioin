@@ -77,13 +77,18 @@ class ListPresenter @Inject constructor(
                         file
                     )
                 }, {
-                    Log.e("LOG", "Presenter click image ", it)
                     viewState.showNotification("Image has not saved ${it.message}")
                 })
         )
     }
 
-    fun makeBookmark(submit: FutureTarget<Bitmap>, url: String) {
-        viewState.showNotification("Image was added")
+    fun makeBookmark(futureTarget: FutureTarget<Bitmap>, url: String) {
+        compositeDisposable.add(interactor.makeBookmarkFromImage(futureTarget, url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                Log.e("LOG", "GOOD")
+                viewState.showNotification("Image was added")
+            })
+
     }
 }
