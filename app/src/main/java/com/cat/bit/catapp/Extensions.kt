@@ -1,26 +1,14 @@
 package com.cat.bit.catapp
 
 import android.graphics.Bitmap
-import android.R.array
-import android.R.attr.bitmap
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
-import java.nio.ByteBuffer
-import android.R.attr.bitmap
-import android.R.attr.name
 import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 
-
-fun Bitmap.createByteArray(): ByteArray {
-    val size = this.rowBytes * this.height
-    val byteBuffer = ByteBuffer.allocate(size)
-    this.copyPixelsToBuffer(byteBuffer)
-    return byteBuffer.array()
-}
 /**
  * Convert bitmap to byte array using ByteBuffer.
  */
-fun Bitmap.convertToByteArray(): ByteArray {
+fun Bitmap.convertToByteArrayUncompressed(): ByteArray {
     //minimum number of bytes that can be used to store this bitmap's pixels
     val size = this.byteCount
 
@@ -40,6 +28,15 @@ fun Bitmap.convertToByteArray(): ByteArray {
     return bytes
 }
 
-fun ByteArray.covertBitmapFromByteArray() : Bitmap {
-    return BitmapFactory.decodeByteArray(this, 0, this.size);
+fun Bitmap.convertToByteArray(): ByteArray {
+    val baos = ByteArrayOutputStream()
+    baos.use {
+        this.compress(Bitmap.CompressFormat.PNG, 100, it)
+    }
+    return baos.toByteArray()
+
+}
+
+fun ByteArray?.convertBitmapFromByteArray(): Bitmap? {
+    return this?.size?.let { BitmapFactory.decodeByteArray(this, 0, it) }
 }

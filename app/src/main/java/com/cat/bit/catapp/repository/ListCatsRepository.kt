@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import android.os.Environment
 import com.bumptech.glide.request.FutureTarget
 import com.cat.bit.catapp.convertToByteArray
+import com.cat.bit.catapp.entity.Bookmark
 import com.cat.bit.catapp.network.CatApi
 import com.cat.bit.catapp.entity.Cats
-import com.cat.bit.catapp.room.Bookmark
 import com.cat.bit.catapp.room.BookmarkDao
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -30,10 +30,7 @@ interface IListCatsRepository {
 class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDao) :
     IListCatsRepository {
 
-    override fun getAllBookmarImages(): Single<List<Bookmark>> = Single.fromCallable {
-        db.getAll()
-    }
-
+    override fun getAllBookmarImages() = db.getAll()
 
     override fun saveBitmapInDownloads(
         futureTarget: FutureTarget<Bitmap>,
@@ -63,7 +60,6 @@ class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDa
         url: String
     ): Completable =
         Completable.fromAction { db.insertImage(Bookmark(image = bitmap.get().convertToByteArray())) }
-
 
 }
 

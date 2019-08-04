@@ -48,6 +48,7 @@ ext {
     moxyVersion = '2.0-alpha05'
     navVersionKtx = '2.1.0-beta02'
     room_version = "2.2.0-alpha01"
+    rxPermissionsVersion = "0.10.2"
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -63,6 +64,8 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "com.github.pwittchen:reactivenetwork-rx2:$rxNetworkVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+    implementation "com.github.tbruyelle:rxpermissions:$rxPermissionsVersion"
+
     // Dagger
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

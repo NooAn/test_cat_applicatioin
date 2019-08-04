@@ -1,10 +1,11 @@
-package com.cat.bit.catapp
+package com.cat.bit.catapp.ui
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,19 +20,25 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.util.FixedPreloadSizeProvider
+import com.cat.bit.catapp.App
+import com.cat.bit.catapp.DEFAULT_IMAGE
+import com.cat.bit.catapp.R
 import com.cat.bit.catapp.databinding.ItemCatBinding
 import com.cat.bit.catapp.entity.Cats
 import com.cat.bit.catapp.presenter.ListPresenter
 import com.cat.bit.catapp.view.ListView
+import com.github.nitrico.lastadapter.BR
 import com.github.nitrico.lastadapter.LastAdapter
 import com.github.nitrico.lastadapter.Type
 import com.google.android.material.snackbar.Snackbar
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import java.io.File
 import java.util.*
+import java.util.jar.Manifest
 import javax.inject.Inject
 
 
@@ -53,6 +60,8 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     private val MAX_PRELOAD = 5
     private var listCats = arrayListOf<Cats>()
     private val sizeProvider = FixedPreloadSizeProvider<String>(300, 300)
+    private lateinit var rxPermissions: RxPermissions
+
 
     private val modelProvider: PreloadModelProvider<String> =
         object : PreloadModelProvider<String> {
@@ -86,7 +95,10 @@ class ListFragment : MvpAppCompatFragment(), ListView {
                 .into(holder.binding.ivCatImage)
 
             holder.binding.btnSave.setOnClickListener {
-                presenter.saveImage(bitmapBuilder.submit(), url)
+                rxPermissions.request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe {
+                        presenter.saveImage(bitmapBuilder.submit(), url)
+                    }
             }
 
             holder.binding.btnBookmark.setOnClickListener { view ->
@@ -114,19 +126,26 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     override fun onCreate(savedInstanceState: Bundle?) {
         (activity!!.application as App).component.inject(this)
         super.onCreate(savedInstanceState)
+        rxPermissions = RxPermissions(this)
     }
 
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val recyclerViewPreLoader =
             RecyclerViewPreloader(this, modelProvider, sizeProvider, MAX_PRELOAD)
         with(recyclerView) {
             addOnScrollListener(recyclerViewPreLoader)
             layoutManager =
-                LinearLayoutManager(this@ListFragment.context, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(
+                    this@ListFragment.context,
+                    LinearLayoutManager.VERTICAL,
+                    false
+                )
         }
-
+        swipeToRefresh.setOnRefreshListener {
+            presenter.loadCats()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -149,6 +168,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     }
 
     override fun showList(list: List<Cats>) {
+        listCats = arrayListOf()
         listCats.addAll(list)
         adapter = LastAdapter(listCats, BR.item)
             .map<Cats>(typeCats)
@@ -156,11 +176,11 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     }
 
     override fun showLoading() {
-
+        swipeToRefresh?.isRefreshing = true
     }
 
     override fun hideLoading() {
-
+        swipeToRefresh?.isRefreshing = false
     }
 
     override fun hideNoInternetConnection() {
@@ -180,8 +200,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
         Toast.makeText(activity, s, Toast.LENGTH_SHORT).show()
     }
 
-    fun showSnack(string: String) {
-
+    private fun showSnack(string: String) {
         snackbar?.show()
     }
 }

@@ -1,7 +1,9 @@
 package com.cat.bit.catapp.interactor
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.bumptech.glide.request.FutureTarget
+import com.cat.bit.catapp.convertBitmapFromByteArray
 import com.cat.bit.catapp.entity.Cats
 import com.cat.bit.catapp.repository.ListCatsRepository
 import javax.inject.Inject
@@ -23,7 +25,14 @@ class ListInteractor @Inject constructor(private val repository: ListCatsReposit
         url: String
     ) = repository.saveBitmapInDownloads(futureTarget, url)
 
-    fun getAllBookmarks() = repository.getAllBookmarImages()
+    fun getAllBookmarks() =
+        repository
+            .getAllBookmarImages()
+            .flattenAsObservable { it }
+            .map {
+                it.apply { bitmap = image.convertBitmapFromByteArray() }
+            }
+            .toList()
 
 
 }

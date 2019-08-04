@@ -3,4 +3,5 @@
     <string name="title_home">Cats</string>
     <string name="title_dashboard">Bookmarks</string>
     <string name="title_notifications">Notifications</string>
+    <string name="sorry_there_s_nothing_here">Sorry, there\'s nothing here</string>
 </resources>

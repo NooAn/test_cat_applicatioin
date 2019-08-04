@@ -6,7 +6,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
-import com.cat.bit.catapp.ListFragment
+import com.cat.bit.catapp.ui.ListFragment
 import com.cat.bit.catapp.R
 import moxy.MvpAppCompatActivity
 

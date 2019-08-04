@@ -1,10 +1,10 @@
 package com.cat.bit.catapp.dagger
 
-import com.cat.bit.catapp.ListFragment
 import dagger.Component
 import android.app.Application
 import com.cat.bit.catapp.App
 import com.cat.bit.catapp.ui.BookmarksFragment
+import com.cat.bit.catapp.ui.ListFragment
 import dagger.BindsInstance
 import javax.inject.Singleton
 

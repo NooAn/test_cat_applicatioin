@@ -1,5 +1,6 @@
 package com.cat.bit.catapp.presenter
 
+import android.util.Log
 import com.cat.bit.catapp.interactor.ListInteractor
 import com.cat.bit.catapp.view.BookmarksView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,20 +15,17 @@ class BookmarksPresenter @Inject constructor(private val interactor: ListInterac
     MvpPresenter<BookmarksView>() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        loadAllImages()
-    }
 
-    private fun loadAllImages() {
+    fun loadAllImages() {
         compositeDisposable.add(
             interactor.getAllBookmarks()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    viewState.showList(it)
+                    if (it.size == 0) viewState.showSorry() else
+                        viewState.showList(it)
                 }, {
-
+                    Log.e("LOG", "Presenter bookmarks said:", it)
                 })
         )
     }

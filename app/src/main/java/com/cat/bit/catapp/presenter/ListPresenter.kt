@@ -2,7 +2,6 @@ package com.cat.bit.catapp.presenter
 
 import android.graphics.Bitmap
 import android.net.NetworkInfo
-import android.util.Log
 import com.bumptech.glide.request.FutureTarget
 import com.cat.bit.catapp.interactor.ListInteractor
 import com.cat.bit.catapp.network.ConnectivityInteractor
@@ -22,21 +21,25 @@ class ListPresenter @Inject constructor(
 ) :
     MvpPresenter<ListView>() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        viewState.showLoading()
         initNetworkStateListening()
-        loadFirstCats()
+        loadCats()
     }
 
-    private fun loadFirstCats() {
+    fun loadCats() {
         compositeDisposable.add(
             interactor.getListOfCat()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally { viewState.hideLoading() }
                 .subscribe({
                     viewState.showList(it)
                 }, {
                     viewState.showNotification("List of cats was not downloaded => ${it.message}")
+                    viewState.hideLoading()
                 })
         )
     }
@@ -86,7 +89,6 @@ class ListPresenter @Inject constructor(
         compositeDisposable.add(interactor.makeBookmarkFromImage(futureTarget, url)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe {
-                Log.e("LOG", "GOOD")
                 viewState.showNotification("Image was added")
             })
 
