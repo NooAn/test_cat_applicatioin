@@ -21,7 +21,7 @@ class ListPresenter @Inject constructor(
 ) :
     MvpPresenter<ListView>() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.showLoading()
@@ -45,7 +45,7 @@ class ListPresenter @Inject constructor(
     }
 
     private fun onConnectivityChanged(connectivity: Connectivity) {
-        if (connectivity.state == NetworkInfo.State.CONNECTED || connectivity.state == NetworkInfo.State.CONNECTING) {
+        if (connectivity.state == NetworkInfo.State.CONNECTED) {
             viewState.hideNoInternetConnection()
         } else {
             viewState.showNoInternetConnection()
@@ -55,6 +55,7 @@ class ListPresenter @Inject constructor(
     private fun initNetworkStateListening() {
         compositeDisposable.add(
             connectivity.connectivityObservable
+                .distinctUntilChanged()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ onConnectivityChanged(it) }, {})

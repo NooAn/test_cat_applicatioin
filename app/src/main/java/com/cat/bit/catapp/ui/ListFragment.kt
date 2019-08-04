@@ -201,6 +201,11 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     }
 
     private fun showSnack(string: String) {
+        snackbar = Snackbar.make(
+            activity!!.findViewById(android.R.id.content),
+            string,
+            Snackbar.LENGTH_LONG
+        )
         snackbar?.show()
     }
 }
