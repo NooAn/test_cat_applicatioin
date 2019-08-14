@@ -1,6 +1,7 @@
 package com.cat.bit.catapp.presenter
 
 import android.util.Log
+import com.cat.bit.catapp.interactor.IListInteractor
 import com.cat.bit.catapp.interactor.ListInteractor
 import com.cat.bit.catapp.view.BookmarksView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,6 +29,11 @@ class BookmarksPresenter @Inject constructor(private val interactor: ListInterac
                     Log.e("LOG", "Presenter bookmarks said:", it)
                 })
         )
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.clear()
+        super.onDestroy()
     }
 
 }

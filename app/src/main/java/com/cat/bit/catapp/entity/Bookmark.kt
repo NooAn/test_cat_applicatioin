@@ -1,15 +1,10 @@
 package com.cat.bit.catapp.entity
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.cat.bit.catapp.convertBitmapFromByteArray
-import com.google.gson.annotations.SerializedName
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 @Entity(tableName = "bookmarks")
 data class Bookmark(

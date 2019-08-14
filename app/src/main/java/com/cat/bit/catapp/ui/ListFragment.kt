@@ -44,7 +44,6 @@ import javax.inject.Inject
 
 class ListFragment : MvpAppCompatFragment(), ListView {
 
-
     @Inject
     @InjectPresenter
     lateinit var presenter: ListPresenter
@@ -59,26 +58,27 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     private var listener: OnFragmentInteractionListener? = null
     private val MAX_PRELOAD = 5
     private var listCats = arrayListOf<Cats>()
-    private val sizeProvider = FixedPreloadSizeProvider<String>(300, 300)
+    private val SIZE = 300
+
+    private val sizeProvider = FixedPreloadSizeProvider<String>(SIZE, SIZE)
     private lateinit var rxPermissions: RxPermissions
 
 
     private val modelProvider: PreloadModelProvider<String> =
         object : PreloadModelProvider<String> {
             override fun getPreloadRequestBuilder(url: String): RequestBuilder<*>? {
-                return Glide.with(context!!)
-                    .load(url)
+                return Glide.with(context!!).load(url)
             }
 
             override fun getPreloadItems(position: Int): MutableList<String?> {
-                val url = listCats.get(position).url
+                val url = listCats[position].url
                 if (TextUtils.isEmpty(url))
                     return Collections.emptyList()
                 else
                     return Collections.singletonList(url)
             }
         }
-    val requestOptions = RequestOptions().override(300)
+    private val requestOptions = RequestOptions().override(SIZE)
         .downsample(DownsampleStrategy.CENTER_INSIDE)
         .skipMemoryCache(true)
         .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -101,7 +101,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
                     }
             }
 
-            holder.binding.btnBookmark.setOnClickListener { view ->
+            holder.binding.btnBookmark.setOnClickListener {
                 presenter.makeBookmark(bitmapBuilder.submit(), url)
             }
 

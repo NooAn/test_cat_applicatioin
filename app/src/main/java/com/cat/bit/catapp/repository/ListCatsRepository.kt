@@ -23,14 +23,15 @@ interface IListCatsRepository {
         url: String
     ): Completable
 
-    fun getAllBookmarImages(): Single<List<Bookmark>>
+    fun getAllBookmarkImages(): Single<List<Bookmark>>
     fun saveBitmapInDownloads(futureTarget: FutureTarget<Bitmap>, url: String): Single<File>
 }
 
 class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDao) :
     IListCatsRepository {
+    private val LIMIT = 10
 
-    override fun getAllBookmarImages() = db.getAll()
+    override fun getAllBookmarkImages() = db.getAll()
 
     override fun saveBitmapInDownloads(
         futureTarget: FutureTarget<Bitmap>,
@@ -51,7 +52,6 @@ class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDa
         }
         .doFinally { futureTarget.cancel(false) }
 
-    private val LIMIT = 10
 
     override fun getListOfCat() = api.getCats(LIMIT)
 

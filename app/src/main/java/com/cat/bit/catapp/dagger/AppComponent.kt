@@ -6,7 +6,10 @@ import com.cat.bit.catapp.App
 import com.cat.bit.catapp.ui.BookmarksFragment
 import com.cat.bit.catapp.ui.ListFragment
 import dagger.BindsInstance
+import java.lang.annotation.Documented
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
 
 @Singleton
 @Component(modules = [NetworkModule::class, AppModule::class, ListModule::class])
