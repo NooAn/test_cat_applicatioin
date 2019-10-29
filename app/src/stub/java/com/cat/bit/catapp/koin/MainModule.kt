@@ -10,7 +10,9 @@ import com.cat.bit.catapp.network.NetworkConnectionHelper
 import com.cat.bit.catapp.network.RequestInterceptor
 import com.cat.bit.catapp.presenter.BookmarksPresenter
 import com.cat.bit.catapp.presenter.ListPresenter
+import com.cat.bit.catapp.repository.IListCatsRepository
 import com.cat.bit.catapp.repository.ListCatsRepository
+import com.cat.bit.catapp.repository.RepositoryStub
 import com.cat.bit.catapp.room.BookmarkDB
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,6 +34,7 @@ val appModule = module {
 
     //List
     single { ListCatsRepository(get(), get()) }
+    single<IListCatsRepository> { RepositoryStub(get())}
     single { ListInteractor(get()) }
     factory { ListPresenter(get(), get()) }
     factory { BookmarksPresenter(get()) }

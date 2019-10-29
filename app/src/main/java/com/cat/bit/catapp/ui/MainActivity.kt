@@ -22,7 +22,8 @@ class MainActivity : MvpAppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        navController = Navigation.findNavController(this,
+        navController = Navigation.findNavController(
+            this,
             R.id.nav_host_fragment
         )
         navView.setupWithNavController(navController)

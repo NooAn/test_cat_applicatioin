@@ -5,7 +5,7 @@ import com.bumptech.glide.request.FutureTarget
 import com.cat.bit.catapp.convertBitmapFromByteArray
 import com.cat.bit.catapp.entity.Bookmark
 import com.cat.bit.catapp.entity.Cats
-import com.cat.bit.catapp.repository.ListCatsRepository
+import com.cat.bit.catapp.repository.IListCatsRepository
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File
@@ -22,7 +22,7 @@ interface IListInteractor {
 }
 
 
-class ListInteractor constructor(private val repository: ListCatsRepository) :
+class ListInteractor constructor(private val repository: IListCatsRepository) :
     IListInteractor {
     private val DEFAULT_ERROR_IMAGE =
         "https://img.medscape.com/thumbnail_library/dt_160608_error_sign_800x600.jpg"

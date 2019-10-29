@@ -22,8 +22,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "version"
+    productFlavors {
+        prod {
+            dimension "version"
+            applicationIdSuffix ".prod"
+            versionNameSuffix "-prod"
+        }
+        dev {
+            dimension "version"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+        stub {
+            dimension "version"
+            applicationIdSuffix ".stub"
+            versionNameSuffix "-stub"
+        }
+    }
     dataBinding {
         enabled = true
+    }
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if ((names.contains("dev") || names.contains("stub")) && variant.buildType.name == "release") {
+            setIgnore(true)
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
