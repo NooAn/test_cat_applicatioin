@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.cat.bit.catapp.App
 import com.cat.bit.catapp.BR
 import com.cat.bit.catapp.R
 import com.cat.bit.catapp.databinding.ItemBookmarksBinding
@@ -21,19 +20,19 @@ import kotlinx.android.synthetic.main.fragment_list.recyclerView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
-import javax.inject.Inject
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
-class BookmarksFragment : MvpAppCompatFragment(), BookmarksView {
+class BookmarksFragment : MvpAppCompatFragment(), BookmarksView, KoinComponent {
 
     private var adapter: LastAdapter? = null
 
-    @Inject
     @InjectPresenter
     lateinit var presenter: BookmarksPresenter
 
     @ProvidePresenter
     fun providePresenter(): BookmarksPresenter {
-        return presenter
+        return get()
     }
 
     private var listCats = arrayListOf<Bookmark>()
@@ -43,11 +42,6 @@ class BookmarksFragment : MvpAppCompatFragment(), BookmarksView {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_bookmarks, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        (activity!!.application as App).component.inject(this)
-        super.onCreate(savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -12,10 +12,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import moxy.InjectViewState
 import moxy.MvpPresenter
-import javax.inject.Inject
 
 @InjectViewState
-class ListPresenter @Inject constructor(
+class ListPresenter constructor(
     private val connectivity: ConnectivityInteractor,
     private val interactor: ListInteractor
 ) :

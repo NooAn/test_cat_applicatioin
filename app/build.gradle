@@ -38,7 +38,7 @@ ext {
     rxKotlinVersion = '2.3.0'
     rxAndroidVersion = '2.1.0'
     rxNetworkVersion = '0.12.1'
-    daggerVersion = '2.11'
+    koin_version = '2.0.1'
     glideVersion = '4.9.0'
     gsonVersion = '2.8.2'
     okhttp3Version = '3.9.0'
@@ -66,10 +66,8 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "com.github.tbruyelle:rxpermissions:$rxPermissionsVersion"
 
-    // Dagger
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    //Koin
+    implementation "org.koin:koin-android:$koin_version"
 
     // Moxy
     implementation "com.github.moxy-community:moxy:$moxyVersion"

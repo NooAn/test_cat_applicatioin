@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.util.FixedPreloadSizeProvider
-import com.cat.bit.catapp.App
 import com.cat.bit.catapp.DEFAULT_IMAGE
 import com.cat.bit.catapp.R
 import com.cat.bit.catapp.databinding.ItemCatBinding
@@ -36,21 +34,19 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
+import org.koin.core.KoinComponent
 import java.io.File
 import java.util.*
-import java.util.jar.Manifest
-import javax.inject.Inject
+import org.koin.core.get
 
+class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
 
-class ListFragment : MvpAppCompatFragment(), ListView {
-
-    @Inject
     @InjectPresenter
     lateinit var presenter: ListPresenter
 
     @ProvidePresenter
     fun providePresenter(): ListPresenter {
-        return presenter
+        return get()
     }
 
     private var adapter: LastAdapter? = null
@@ -78,6 +74,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
                     return Collections.singletonList(url)
             }
         }
+
     private val requestOptions = RequestOptions().override(SIZE)
         .downsample(DownsampleStrategy.CENTER_INSIDE)
         .skipMemoryCache(true)
@@ -124,7 +121,6 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (activity!!.application as App).component.inject(this)
         super.onCreate(savedInstanceState)
         rxPermissions = RxPermissions(this)
     }
