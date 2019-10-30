@@ -4,4 +4,7 @@
     <string name="title_dashboard">Bookmarks</string>
     <string name="title_notifications">Notifications</string>
     <string name="sorry_there_s_nothing_here">Sorry, there\'s nothing here</string>
+
+    <!--CatService-->
+    <string name="service_description">Service periodically refreshes cat screen.</string>
 </resources>

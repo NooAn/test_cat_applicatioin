@@ -25,7 +25,6 @@ class ListPresenter constructor(
         super.onFirstViewAttach()
         viewState.showLoading()
         initNetworkStateListening()
-        loadCats()
     }
 
     fun loadCats() {
@@ -91,6 +90,5 @@ class ListPresenter constructor(
             .observeOn(AndroidSchedulers.mainThread()).subscribe {
                 viewState.showNotification("Image was added")
             })
-
     }
 }

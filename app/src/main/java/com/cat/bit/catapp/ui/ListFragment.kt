@@ -1,14 +1,18 @@
 package com.cat.bit.catapp.ui
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,7 +23,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.util.FixedPreloadSizeProvider
+import com.cat.bit.catapp.CatService
 import com.cat.bit.catapp.DEFAULT_IMAGE
+import com.cat.bit.catapp.FILTER_ACTION_KEY
 import com.cat.bit.catapp.R
 import com.cat.bit.catapp.databinding.ItemCatBinding
 import com.cat.bit.catapp.entity.Cats
@@ -59,6 +65,7 @@ class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
     private val sizeProvider = FixedPreloadSizeProvider<String>(SIZE, SIZE)
     private lateinit var rxPermissions: RxPermissions
 
+    private var receiver: BroadcastReceiver? = null
 
     private val modelProvider: PreloadModelProvider<String> =
         object : PreloadModelProvider<String> {
@@ -120,6 +127,11 @@ class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
         return inflater.inflate(R.layout.fragment_list, container, false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.stopService(Intent(activity, CatService::class.java))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         rxPermissions = RxPermissions(this)
@@ -142,6 +154,12 @@ class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
         swipeToRefresh.setOnRefreshListener {
             presenter.loadCats()
         }
+        activity?.startService(Intent(activity, CatService::class.java))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setReceiver()
     }
 
     override fun onAttach(context: Context) {
@@ -157,7 +175,6 @@ class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
         super.onDetach()
         listener = null
     }
-
 
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri)
@@ -204,6 +221,34 @@ class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
         )
         snackbar?.show()
     }
+
+    override fun onStop() {
+        super.onStop()
+        receiver?.let {
+            LocalBroadcastManager.getInstance(activity as Context).unregisterReceiver(it)
+            Log.d("CUSTOM_SERVICE", "Unregistered.")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        receiver = null
+    }
+
+    private fun setReceiver() {
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                presenter.loadCats()
+            }
+        }
+
+        receiver?.let {
+            IntentFilter().run {
+                addAction(FILTER_ACTION_KEY)
+                LocalBroadcastManager.getInstance(activity as Context)
+                    .registerReceiver(it, this)
+                Log.d("CUSTOM_SERVICE", "Registered.")
+            }
+        }
+    }
 }
-
-
