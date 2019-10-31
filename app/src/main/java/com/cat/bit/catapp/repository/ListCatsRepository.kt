@@ -13,8 +13,6 @@ import io.reactivex.Single
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
-import javax.inject.Inject
-
 
 interface IListCatsRepository {
     fun getListOfCat(): Single<List<Cats>>
@@ -27,7 +25,7 @@ interface IListCatsRepository {
     fun saveBitmapInDownloads(futureTarget: FutureTarget<Bitmap>, url: String): Single<File>
 }
 
-class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDao) :
+class ListCatsRepository constructor(val api: CatApi, val db: BookmarkDao) :
     IListCatsRepository {
     private val LIMIT = 10
 
@@ -62,6 +60,3 @@ class ListCatsRepository @Inject constructor(val api: CatApi, val db: BookmarkDa
         Completable.fromAction { db.insertImage(Bookmark(image = bitmap.get().convertToByteArray())) }
 
 }
-
-
-

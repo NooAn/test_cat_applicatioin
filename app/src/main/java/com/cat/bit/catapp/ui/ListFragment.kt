@@ -1,7 +1,9 @@
 package com.cat.bit.catapp.ui
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -10,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,8 +23,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.util.FixedPreloadSizeProvider
-import com.cat.bit.catapp.App
+import com.cat.bit.catapp.CatService
 import com.cat.bit.catapp.DEFAULT_IMAGE
+import com.cat.bit.catapp.FILTER_ACTION_KEY
 import com.cat.bit.catapp.R
 import com.cat.bit.catapp.databinding.ItemCatBinding
 import com.cat.bit.catapp.entity.Cats
@@ -36,21 +40,19 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
+import org.koin.core.KoinComponent
 import java.io.File
 import java.util.*
-import java.util.jar.Manifest
-import javax.inject.Inject
+import org.koin.core.get
 
+class ListFragment : MvpAppCompatFragment(), ListView, KoinComponent {
 
-class ListFragment : MvpAppCompatFragment(), ListView {
-
-    @Inject
     @InjectPresenter
     lateinit var presenter: ListPresenter
 
     @ProvidePresenter
     fun providePresenter(): ListPresenter {
-        return presenter
+        return get()
     }
 
     private var adapter: LastAdapter? = null
@@ -63,6 +65,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
     private val sizeProvider = FixedPreloadSizeProvider<String>(SIZE, SIZE)
     private lateinit var rxPermissions: RxPermissions
 
+    private var receiver: BroadcastReceiver? = null
 
     private val modelProvider: PreloadModelProvider<String> =
         object : PreloadModelProvider<String> {
@@ -78,6 +81,7 @@ class ListFragment : MvpAppCompatFragment(), ListView {
                     return Collections.singletonList(url)
             }
         }
+
     private val requestOptions = RequestOptions().override(SIZE)
         .downsample(DownsampleStrategy.CENTER_INSIDE)
         .skipMemoryCache(true)
@@ -123,8 +127,12 @@ class ListFragment : MvpAppCompatFragment(), ListView {
         return inflater.inflate(R.layout.fragment_list, container, false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity?.stopService(Intent(activity, CatService::class.java))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        (activity!!.application as App).component.inject(this)
         super.onCreate(savedInstanceState)
         rxPermissions = RxPermissions(this)
     }
@@ -146,6 +154,12 @@ class ListFragment : MvpAppCompatFragment(), ListView {
         swipeToRefresh.setOnRefreshListener {
             presenter.loadCats()
         }
+        activity?.startService(Intent(activity, CatService::class.java))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setReceiver()
     }
 
     override fun onAttach(context: Context) {
@@ -161,7 +175,6 @@ class ListFragment : MvpAppCompatFragment(), ListView {
         super.onDetach()
         listener = null
     }
-
 
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction(uri: Uri)
@@ -208,6 +221,34 @@ class ListFragment : MvpAppCompatFragment(), ListView {
         )
         snackbar?.show()
     }
+
+    override fun onStop() {
+        super.onStop()
+        receiver?.let {
+            LocalBroadcastManager.getInstance(activity as Context).unregisterReceiver(it)
+            Log.d("CUSTOM_SERVICE", "Unregistered.")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        receiver = null
+    }
+
+    private fun setReceiver() {
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                presenter.loadCats()
+            }
+        }
+
+        receiver?.let {
+            IntentFilter().run {
+                addAction(FILTER_ACTION_KEY)
+                LocalBroadcastManager.getInstance(activity as Context)
+                    .registerReceiver(it, this)
+                Log.d("CUSTOM_SERVICE", "Registered.")
+            }
+        }
+    }
 }
-
-

@@ -6,11 +6,9 @@ import com.cat.bit.catapp.convertBitmapFromByteArray
 import com.cat.bit.catapp.entity.Bookmark
 import com.cat.bit.catapp.entity.Cats
 import com.cat.bit.catapp.repository.IListCatsRepository
-import com.cat.bit.catapp.repository.ListCatsRepository
 import io.reactivex.Completable
 import io.reactivex.Single
 import java.io.File
-import javax.inject.Inject
 
 interface IListInteractor {
     fun getListOfCat(): Single<List<Cats>>
@@ -24,7 +22,7 @@ interface IListInteractor {
 }
 
 
-class ListInteractor @Inject constructor(private val repository: ListCatsRepository) :
+class ListInteractor constructor(private val repository: IListCatsRepository) :
     IListInteractor {
     private val DEFAULT_ERROR_IMAGE =
         "https://img.medscape.com/thumbnail_library/dt_160608_error_sign_800x600.jpg"
@@ -50,6 +48,4 @@ class ListInteractor @Inject constructor(private val repository: ListCatsReposit
                 it.apply { bitmap = image.convertBitmapFromByteArray() }
             }
             .toList()
-
-
 }
